@@ -5,23 +5,31 @@ import 'package:anti_hook_vpn/anti_hook_vpn_method_channel.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelAntiHookVpn platform = MethodChannelAntiHookVpn();
+  final MethodChannelAntiHookVpn platform = MethodChannelAntiHookVpn();
   const MethodChannel channel = MethodChannel('anti_hook_vpn');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) async {
-        return '42';
-      },
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      if (methodCall.method == 'checkSecurity') {
+        return <String, bool>{
+          'isFridaDetected': false,
+          'isProxyOrVpnDetected': false,
+        };
+      }
+      return null;
+    });
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('checkSecurity returns safe status', () async {
+    final status = await platform.checkSecurity();
+    expect(status.isFridaDetected, false);
+    expect(status.isProxyOrVpnDetected, false);
+    expect(status.isAttacked, false);
   });
 }

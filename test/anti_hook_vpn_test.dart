@@ -7,9 +7,8 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockAntiHookVpnPlatform
     with MockPlatformInterfaceMixin
     implements AntiHookVpnPlatform {
-
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<SecurityStatus> checkSecurity() async => SecurityStatus.safe;
 }
 
 void main() {
@@ -19,11 +18,13 @@ void main() {
     expect(initialPlatform, isInstanceOf<MethodChannelAntiHookVpn>());
   });
 
-  test('getPlatformVersion', () async {
-    AntiHookVpn antiHookVpnPlugin = AntiHookVpn();
-    MockAntiHookVpnPlatform fakePlatform = MockAntiHookVpnPlatform();
+  test('checkSecurity returns SecurityStatus', () async {
+    final MockAntiHookVpnPlatform fakePlatform = MockAntiHookVpnPlatform();
     AntiHookVpnPlatform.instance = fakePlatform;
 
-    expect(await antiHookVpnPlugin.getPlatformVersion(), '42');
+    final status = await AntiHookVpn.checkSecurity();
+    expect(status.isFridaDetected, false);
+    expect(status.isProxyOrVpnDetected, false);
+    expect(status.isAttacked, false);
   });
 }
