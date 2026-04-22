@@ -1,6 +1,6 @@
 name: anti_hook_vpn
 description: "Flutter plugin phát hiện VPN, Proxy và Frida hook trên Android và iOS. Bảo vệ ứng dụng khỏi các công cụ tấn công runtime."
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/hainguyen-ar1/anti_hook_vpn
 repository: https://github.com/hainguyen-ar1/anti_hook_vpn
 issue_tracker: https://github.com/hainguyen-ar1/anti_hook_vpn/issues
