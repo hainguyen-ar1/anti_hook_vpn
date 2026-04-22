@@ -15,13 +15,14 @@ import kotlin.test.Test
 
 internal class AntiHookVpnPluginTest {
     @Test
-    fun onMethodCall_getPlatformVersion_returnsExpectedValue() {
+    fun onMethodCall_checkSecurity_returnsExpectedValue() {
         val plugin = AntiHookVpnPlugin()
 
-        val call = MethodCall("getPlatformVersion", null)
+        val call = MethodCall("checkSecurity", null)
         val mockResult: MethodChannel.Result = Mockito.mock(MethodChannel.Result::class.java)
         plugin.onMethodCall(call, mockResult)
 
-        Mockito.verify(mockResult).success("Android " + android.os.Build.VERSION.RELEASE)
+        // Context is null at this point so we expect an error response
+        Mockito.verify(mockResult).error("NO_CONTEXT", "Application context not available", null)
     }
 }
