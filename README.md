@@ -11,7 +11,7 @@ Flutter plugin phát hiện **VPN**, **Proxy** và **Frida** hook framework đan
 
 | Tính năng | Android | iOS |
 |---|:---:|:---:|
-| Phát hiện Frida (port scan 27042/27043) | ✅ | ✅ |
+| Phát hiện Frida (port scan) | ✅ | ✅ |
 | Phát hiện Frida (process/dylib injection) | ✅ | ✅ |
 | Phát hiện VPN đang hoạt động | ✅ | ✅ |
 | Phát hiện HTTP/HTTPS Proxy hệ thống | ✅ | ✅ |
@@ -164,7 +164,7 @@ class SecurityStatus {
 
 | Kỹ thuật | Android | iOS |
 |---|:---:|:---:|
-| Kết nối TCP tới port 27042/27043 | ✅ | ✅ |
+| Kết nối TCP tới port | ✅ | ✅ |
 | Quét `/proc/self/maps` tìm `frida-agent` | ✅ | — |
 | Quét danh sách dylib nạp vào process | — | ✅ |
 

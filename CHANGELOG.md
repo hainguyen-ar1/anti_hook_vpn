@@ -1,7 +1,7 @@
 ## 1.0.0
 
 * Initial release.
-* Detect Frida hooking framework via TCP port scan (27042/27043) and `/proc/self/maps` inspection (Android) or dylib scan (iOS).
+* Detect Frida hooking framework via TCP port scan  and `/proc/self/maps` inspection (Android) or dylib scan (iOS).
 * Detect active VPN connections using `NetworkCapabilities.TRANSPORT_VPN` (Android) and `CFNetworkCopySystemProxySettings __SCOPED__` keys (iOS).
 * Detect system-level HTTP/HTTPS proxy set by tools such as HTTP Toolkit or Charles Proxy.
 * `AntiHookVpn.checkSecurity()` — returns a `SecurityStatus` with individual flags for Frida and VPN/Proxy.
