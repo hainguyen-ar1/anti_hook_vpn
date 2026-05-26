@@ -17,9 +17,9 @@ object SecurityDetector {
     }
 
     /**
-     * Kết nối tới port Frida mặc định bằng client Socket (không phải ServerSocket).
-     * Nếu kết nối thành công → có service đang lắng nghe → Frida có thể đang chạy.
-     * Dùng client Socket tránh false positive do SELinux chặn việc bind port.
+     * Connects to the default Frida port using a client Socket (not ServerSocket).
+     * If the connection succeeds → a service is listening → Frida may be running.
+     * Uses a client Socket to avoid false positives from SELinux blocking port binding.
      */
     private fun checkFridaPort(): Boolean {
         val fridaPorts = intArrayOf(27042, 27043)
@@ -28,7 +28,6 @@ object SecurityDetector {
             try {
                 socket = Socket()
                 socket.connect(InetSocketAddress("127.0.0.1", port), 100)
-                // Kết nối thành công → có server đang lắng nghe trên port này
                 android.util.Log.w("SecurityDetector", "⚠️ [FRIDA] Port $port is OPEN — something is listening!")
                 return true
             } catch (e: Exception) {
@@ -37,7 +36,7 @@ object SecurityDetector {
                 try {
                     socket?.close()
                 } catch (e: Exception) {
-                    // Bỏ qua lỗi đóng
+                    // Ignore close error
                 }
             }
         }
@@ -45,7 +44,7 @@ object SecurityDetector {
     }
 
     /**
-     * Kiểm tra /proc/self/maps để phát hiện Frida được inject vào process.
+     * Checks /proc/self/maps to detect Frida injected into the process.
      */
     private fun checkFridaInMaps(): Boolean {
         val fridaPatterns = listOf("frida", "frida-agent", "libfrida", "frida-gadget", "re.frida")
@@ -77,7 +76,7 @@ object SecurityDetector {
     }
 
     /**
-     * Kiểm tra proxy hệ thống (HTTP Toolkit, Charles Proxy thiết lập Proxy trên Android).
+     * Checks the system proxy (set by tools like HTTP Toolkit or Charles Proxy on Android).
      */
     private fun isSystemProxySet(): Boolean {
         val proxyHost = System.getProperty("http.proxyHost")
@@ -85,7 +84,7 @@ object SecurityDetector {
     }
 
     /**
-     * Kiểm tra VPN đang hoạt động qua NetworkCapabilities (API 24+, tương thích minSdkVersion).
+     * Checks for an active VPN via NetworkCapabilities (API 24+, compatible with minSdkVersion).
      */
     private fun isVpnActive(context: Context): Boolean {
         return try {

@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-/// Flutter plugin entry point cho iOS.
+/// Flutter plugin entry point for iOS.
 ///
-/// Xử lý MethodChannel `anti_hook_vpn` và ủy quyền logic phát hiện
-/// cho [SecurityDetector].
+/// Handles the `anti_hook_vpn` MethodChannel and delegates detection logic
+/// to [SecurityDetector].
 public class AntiHookVpnPlugin: NSObject, FlutterPlugin {
 
     // MARK: - Registration

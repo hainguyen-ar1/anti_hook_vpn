@@ -1,26 +1,26 @@
-/// Kết quả kiểm tra bảo mật trả về từ native layer.
+/// Security check result returned from the native layer.
 class SecurityStatus {
   const SecurityStatus({
     required this.isFridaDetected,
     required this.isProxyOrVpnDetected,
   });
 
-  /// `true` nếu Frida hoặc công cụ hook tương tự đang chạy.
+  /// `true` if Frida or a similar hooking tool is running.
   final bool isFridaDetected;
 
-  /// `true` nếu hệ thống đang có Proxy hoặc VPN hoạt động.
+  /// `true` if a system Proxy or VPN is active.
   final bool isProxyOrVpnDetected;
 
-  /// `true` nếu bất kỳ mối đe dọa nào được phát hiện.
+  /// `true` if any threat is detected.
   bool get isAttacked => isFridaDetected || isProxyOrVpnDetected;
 
-  /// Tạo từ map trả về qua MethodChannel.
+  /// Creates an instance from the map returned via MethodChannel.
   factory SecurityStatus.fromMap(Map<dynamic, dynamic> map) => SecurityStatus(
         isFridaDetected: map['isFridaDetected'] == true,
         isProxyOrVpnDetected: map['isProxyOrVpnDetected'] == true,
       );
 
-  /// Trạng thái an toàn mặc định (không có mối đe dọa).
+  /// Default safe status (no threats detected).
   static const SecurityStatus safe = SecurityStatus(
     isFridaDetected: false,
     isProxyOrVpnDetected: false,

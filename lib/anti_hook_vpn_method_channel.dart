@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'anti_hook_vpn_platform_interface.dart';
 import 'security_status.dart';
 
-/// Implementation của [AntiHookVpnPlatform] dùng [MethodChannel].
+/// Implementation of [AntiHookVpnPlatform] using [MethodChannel].
 class MethodChannelAntiHookVpn extends AntiHookVpnPlatform {
   final MethodChannel methodChannel = const MethodChannel('anti_hook_vpn');
 

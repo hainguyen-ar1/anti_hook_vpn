@@ -8,28 +8,28 @@ import 'security_status.dart';
 
 export 'security_status.dart';
 
-/// Public API của plugin `anti_hook_vpn`.
+/// Public API for the `anti_hook_vpn` plugin.
 ///
-/// Cung cấp hai cách sử dụng:
-/// 1. [checkSecurity] — kiểm tra và trả về [SecurityStatus] để tự xử lý.
-/// 2. [checkAndBlockIfNeeded] — kiểm tra và tự động hiện dialog block nếu bị tấn công.
+/// Provides two usage patterns:
+/// 1. [checkSecurity] — check and return a [SecurityStatus] for custom handling.
+/// 2. [checkAndBlockIfNeeded] — check and automatically show a blocking dialog if attacked.
 class AntiHookVpn {
   AntiHookVpn._();
 
   static bool _isDialogShowing = false;
 
-  /// Gọi native để kiểm tra Frida và VPN/Proxy.
+  /// Calls the native layer to check for Frida and VPN/Proxy.
   ///
-  /// Throws [PlatformException] nếu không gọi được native.
+  /// Throws [PlatformException] if the native call fails.
   static Future<SecurityStatus> checkSecurity() =>
       AntiHookVpnPlatform.instance.checkSecurity();
 
-  /// Kiểm tra bảo mật và hiện dialog không tắt được nếu phát hiện tấn công.
+  /// Performs a security check and shows a non-dismissible dialog if a threat is detected.
   ///
-  /// Dialog chặn toàn bộ tương tác; người dùng chỉ có thể thoát app.
-  /// Hàm này thường được gọi trong `initState` và khi app resume.
+  /// The dialog blocks all interaction; the user can only exit the app.
+  /// Typically called in `initState` and when the app resumes.
   ///
-  /// [onAttacked] — callback tùy chọn, được gọi trước khi dialog hiện.
+  /// [onAttacked] — optional callback invoked before the dialog is shown.
   static Future<void> checkAndBlockIfNeeded(
     BuildContext context, {
     void Function(SecurityStatus status)? onAttacked,
@@ -57,11 +57,11 @@ class AntiHookVpn {
 
   static String _buildMessage(SecurityStatus status) {
     if (status.isFridaDetected) {
-      return 'Phát hiện phần mềm can thiệp hệ thống bộ nhớ runtime (Frida/Xposed). '
-          'Vui lòng gỡ bỏ công cụ root/cheat!';
+      return 'Runtime memory hooking tool detected (Frida/Xposed). '
+          'Please remove root/cheat tools from your device!';
     }
-    return 'Kết nối mạng không an toàn. '
-        'Phát hiện thiết bị đang dùng Proxy hoặc VPN trung gian.';
+    return 'Insecure network connection detected. '
+        'Your device is using an intercepting Proxy or VPN.';
   }
 
   static void _showBlockingDialog(BuildContext context, String message) {
@@ -78,7 +78,7 @@ class AntiHookVpn {
               Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
               SizedBox(width: 8),
               Text(
-                'Cảnh báo Bảo Mật',
+                'Security Warning',
                 style: TextStyle(color: Colors.red),
               ),
             ],
@@ -87,7 +87,7 @@ class AntiHookVpn {
           actions: [
             TextButton(
               onPressed: () => exit(0),
-              child: const Text('Thoát Ứng Dụng'),
+              child: const Text('Exit App'),
             ),
           ],
         ),

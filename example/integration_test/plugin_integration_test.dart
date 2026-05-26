@@ -8,7 +8,7 @@ void main() {
 
   testWidgets('checkSecurity returns a SecurityStatus', (WidgetTester tester) async {
     final status = await AntiHookVpn.checkSecurity();
-    // Kết quả luôn là bool hợp lệ — không throw exception
+    // Result is always a valid bool — no exception thrown
     expect(status.isFridaDetected, isA<bool>());
     expect(status.isProxyOrVpnDetected, isA<bool>());
   });

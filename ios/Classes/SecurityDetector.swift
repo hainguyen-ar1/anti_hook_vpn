@@ -4,26 +4,26 @@ import MachO
 import CFNetwork
 import SystemConfiguration
 
-/// Phát hiện Frida và VPN/Proxy trên iOS.
+/// Detects Frida and VPN/Proxy on iOS.
 ///
-/// Tương đương `SecurityDetector.kt` trên Android với các cơ chế phù hợp iOS:
-/// - Frida: port check + dylib scan (thay `/proc/self/maps` bằng `_dyld_image` APIs)
-/// - VPN: `CFNetworkCopySystemProxySettings` kiểm tra `__SCOPED__` keys
-/// - Proxy: `CFNetworkCopySystemProxySettings` kiểm tra `HTTPEnable` / `HTTPSEnable`
+/// Equivalent to `SecurityDetector.kt` on Android with iOS-specific mechanisms:
+/// - Frida: port check + dylib scan (uses `_dyld_image` APIs instead of `/proc/self/maps`)
+/// - VPN: `CFNetworkCopySystemProxySettings` checking `__SCOPED__` keys
+/// - Proxy: `CFNetworkCopySystemProxySettings` checking `HTTPEnable` / `HTTPSEnable`
 enum SecurityDetector {
 
     // MARK: - Frida Detection
 
-    /// Trả về `true` nếu Frida được phát hiện qua port check hoặc dylib scan.
+    /// Returns `true` if Frida is detected via port check or dylib scan.
     static func isFridaDetected() -> Bool {
         return checkFridaPort() || checkFridaInDylibs()
     }
 
-    /// Kết nối tới port Frida mặc định bằng TCP socket.
+    /// Connects to the default Frida port using a TCP socket.
     ///
-    /// Trên localhost, `connect()` trả về ngay lập tức:
-    /// - `0` nếu server đang lắng nghe → Frida detected
-    /// - `-1` (ECONNREFUSED) nếu không có service → bình thường
+    /// On localhost, `connect()` returns immediately:
+    /// - `0` if a server is listening → Frida detected
+    /// - `-1` (ECONNREFUSED) if no service → normal
     private static func checkFridaPort() -> Bool {
         let fridaPorts: [UInt16] = [27042, 27043]
         return fridaPorts.contains { isPortOpen(port: $0) }
@@ -48,10 +48,10 @@ enum SecurityDetector {
         return result == 0
     }
 
-    /// Quét danh sách dylib đã được nạp vào process hiện tại.
+    /// Scans the list of dylibs loaded into the current process.
     ///
-    /// Đây là cách tương đương đọc `/proc/self/maps` trên Android/Linux.
-    /// Frida inject `FridaGadget.dylib` hoặc `frida-agent.dylib` khi hook.
+    /// This is the iOS equivalent of reading `/proc/self/maps` on Android/Linux.
+    /// Frida injects `FridaGadget.dylib` or `frida-agent.dylib` when hooking.
     private static func checkFridaInDylibs() -> Bool {
         let fridaPatterns = ["frida", "frida-agent", "libfrida", "frida-gadget", "re.frida"]
         let imageCount = _dyld_image_count()
@@ -67,15 +67,15 @@ enum SecurityDetector {
 
     // MARK: - VPN / Proxy Detection
 
-    /// Trả về `true` nếu system proxy hoặc VPN đang hoạt động.
+    /// Returns `true` if a system proxy or VPN is active.
     static func isProxyOrVpnDetected() -> Bool {
         return isSystemProxySet() || isVpnActive()
     }
 
-    /// Kiểm tra system proxy đang được bật (HTTP Toolkit, Charles Proxy).
+    /// Checks whether a system proxy is enabled (e.g. HTTP Toolkit, Charles Proxy).
     ///
-    /// Sử dụng `CFNetworkCopySystemProxySettings()` — tương đương
-    /// `System.getProperty("http.proxyHost")` trên Android.
+    /// Uses `CFNetworkCopySystemProxySettings()` — equivalent to
+    /// `System.getProperty("http.proxyHost")` on Android.
     private static func isSystemProxySet() -> Bool {
         guard let proxySettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue()
                 as? [String: Any] else { return false }
@@ -90,10 +90,10 @@ enum SecurityDetector {
         return false
     }
 
-    /// Kiểm tra VPN đang hoạt động thông qua `CFNetworkCopySystemProxySettings`.
+    /// Checks for an active VPN via `CFNetworkCopySystemProxySettings`.
     ///
-    /// Mọi kết nối VPN trên iOS đều tạo network interface trong `__SCOPED__`
-    /// với prefix `tun`, `tap`, `ppp`, `ipsec`, hoặc `utun`.
+    /// All VPN connections on iOS create a network interface under `__SCOPED__`
+    /// with prefixes like `tun`, `tap`, `ppp`, `ipsec`, or `utun`.
     private static func isVpnActive() -> Bool {
         guard let cfDict = CFNetworkCopySystemProxySettings() else { return false }
         let nsDict = cfDict.takeRetainedValue() as NSDictionary

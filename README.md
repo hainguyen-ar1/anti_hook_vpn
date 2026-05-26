@@ -3,23 +3,23 @@
 [![pub package](https://img.shields.io/pub/v/anti_hook_vpn.svg)](https://pub.dev/packages/anti_hook_vpn)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Flutter plugin phát hiện **VPN**, **Proxy** và **Frida** hook framework đang hoạt động trên thiết bị Android và iOS — giúp bảo vệ ứng dụng khỏi các công cụ tấn công và phân tích runtime.
+A Flutter plugin that detects **VPN**, **Proxy**, and **Frida** hook framework activity on Android and iOS devices — protecting your app from runtime attack and analysis tools.
 
 ---
 
-## Tính năng
+## Features
 
-| Tính năng | Android | iOS |
+| Feature | Android | iOS |
 |---|:---:|:---:|
-| Phát hiện Frida (port scan) | ✅ | ✅ |
-| Phát hiện Frida (process/dylib injection) | ✅ | ✅ |
-| Phát hiện VPN đang hoạt động | ✅ | ✅ |
-| Phát hiện HTTP/HTTPS Proxy hệ thống | ✅ | ✅ |
-| Dialog chặn không tắt được khi bị tấn công | ✅ | ✅ |
+| Frida detection (port scan) | ✅ | ✅ |
+| Frida detection (process/dylib injection) | ✅ | ✅ |
+| Active VPN detection | ✅ | ✅ |
+| System HTTP/HTTPS Proxy detection | ✅ | ✅ |
+| Non-dismissible blocking dialog on threat | ✅ | ✅ |
 
 ---
 
-## Yêu cầu hệ thống
+## Requirements
 
 - **Android**: minSdk ≥ 24
 - **iOS**: iOS ≥ 13.0
@@ -28,22 +28,22 @@ Flutter plugin phát hiện **VPN**, **Proxy** và **Frida** hook framework đan
 
 ---
 
-## Cài đặt
+## Installation
 
 ```yaml
 dependencies:
   anti_hook_vpn: ^1.0.0
 ```
 
-Sau đó chạy:
+Then run:
 
 ```bash
 flutter pub get
 ```
 
-### Quyền Android
+### Android Permissions
 
-Thêm vào `android/app/src/main/AndroidManifest.xml`:
+Add to `android/app/src/main/AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -52,9 +52,9 @@ Thêm vào `android/app/src/main/AndroidManifest.xml`:
 
 ---
 
-## Sử dụng
+## Usage
 
-### 1. Kiểm tra bảo mật và tự xử lý kết quả
+### 1. Check security and handle the result yourself
 
 ```dart
 import 'package:anti_hook_vpn/anti_hook_vpn.dart';
@@ -63,24 +63,24 @@ Future<void> checkSecurity() async {
   final SecurityStatus status = await AntiHookVpn.checkSecurity();
 
   if (status.isFridaDetected) {
-    print('⚠️ Phát hiện Frida đang chạy!');
+    print('⚠️ Frida detected!');
   }
 
   if (status.isProxyOrVpnDetected) {
-    print('⚠️ Phát hiện VPN hoặc Proxy!');
+    print('⚠️ VPN or Proxy detected!');
   }
 
   if (status.isAttacked) {
-    print('🚨 Thiết bị đang bị tấn công!');
+    print('🚨 Device is under attack!');
   } else {
-    print('✅ Thiết bị an toàn.');
+    print('✅ Device is secure.');
   }
 }
 ```
 
-### 2. Tự động hiện dialog chặn khi phát hiện tấn công
+### 2. Automatically show a blocking dialog when a threat is detected
 
-Plugin có sẵn một dialog **không thể tắt** (dùng `PopScope(canPop: false)`), buộc người dùng phải thoát ứng dụng khi phát hiện mối đe dọa.
+The plugin includes a built-in **non-dismissible** dialog (using `PopScope(canPop: false)`) that forces the user to exit the app when a threat is detected.
 
 ```dart
 import 'package:anti_hook_vpn/anti_hook_vpn.dart';
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Kiểm tra lại mỗi khi app được resume
+    // Re-check every time the app is resumed
     if (state == AppLifecycleState.resumed) {
       _runSecurityCheck();
     }
@@ -105,8 +105,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     await AntiHookVpn.checkAndBlockIfNeeded(
       context,
       onAttacked: (status) {
-        // Callback tuỳ chọn — ví dụ: gửi log lên server
-        print('Bị tấn công: $status');
+        // Optional callback — e.g. send logs to server
+        print('Under attack: $status');
       },
     );
   }
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 static Future<SecurityStatus> checkSecurity()
 ```
 
-Gọi native để kiểm tra Frida và VPN/Proxy. Ném `PlatformException` nếu không thể gọi native.
+Calls the native layer to check for Frida and VPN/Proxy. Throws `PlatformException` if the native call fails.
 
 ---
 
@@ -142,7 +142,7 @@ static Future<void> checkAndBlockIfNeeded(
 })
 ```
 
-Kiểm tra bảo mật và tự động hiện dialog chặn toàn bộ tương tác nếu phát hiện mối đe dọa. Người dùng chỉ có thể bấm "Thoát Ứng Dụng".
+Performs a security check and automatically shows a non-dismissible blocking dialog if a threat is detected. The user can only tap "Exit App".
 
 ---
 
@@ -150,49 +150,49 @@ Kiểm tra bảo mật và tự động hiện dialog chặn toàn bộ tương 
 
 ```dart
 class SecurityStatus {
-  final bool isFridaDetected;       // true nếu Frida đang hook
-  final bool isProxyOrVpnDetected;  // true nếu có Proxy hoặc VPN
-  bool get isAttacked;              // true nếu bất kỳ mối đe dọa nào được phát hiện
+  final bool isFridaDetected;       // true if Frida is hooking
+  final bool isProxyOrVpnDetected;  // true if a Proxy or VPN is active
+  bool get isAttacked;              // true if any threat is detected
 }
 ```
 
 ---
 
-## Cơ chế phát hiện
+## Detection Mechanisms
 
 ### Frida
 
-| Kỹ thuật | Android | iOS |
+| Technique | Android | iOS |
 |---|:---:|:---:|
-| Kết nối TCP tới port | ✅ | ✅ |
-| Quét `/proc/self/maps` tìm `frida-agent` | ✅ | — |
-| Quét danh sách dylib nạp vào process | — | ✅ |
+| TCP connection to known ports | ✅ | ✅ |
+| Scan `/proc/self/maps` for `frida-agent` | ✅ | — |
+| Scan loaded dylibs in process | — | ✅ |
 
 ### VPN
 
-| Kỹ thuật | Android | iOS |
+| Technique | Android | iOS |
 |---|:---:|:---:|
 | `NetworkCapabilities.TRANSPORT_VPN` | ✅ | — |
 | `CFNetworkCopySystemProxySettings __SCOPED__` | — | ✅ |
 
 ### Proxy
 
-| Kỹ thuật | Android | iOS |
+| Technique | Android | iOS |
 |---|:---:|:---:|
 | `System.getProperty("http.proxyHost")` | ✅ | — |
 | `CFNetworkCopySystemProxySettings HTTPEnable/HTTPSEnable` | — | ✅ |
 
 ---
 
-## Ví dụ
+## Example
 
-Xem thư mục [`example/`](https://github.com/hainguyen-ar1/anti_hook_vpn/tree/master/example) để chạy app demo đầy đủ với Security Scanner UI.
+See the [`example/`](https://github.com/hainguyen-ar1/anti_hook_vpn/tree/master/example) directory for a full demo app with a Security Scanner UI.
 
 ---
 
-## Đóng góp
+## Contributing
 
-Pull requests luôn được chào đón. Vui lòng mở Issue trước khi thực hiện thay đổi lớn.
+Pull requests are always welcome. Please open an Issue before making large changes.
 
 ## License
 

@@ -49,7 +49,6 @@ class _SecurityScanPageState extends State<SecurityScanPage>
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-    // Auto-scan on launch
     WidgetsBinding.instance.addPostFrameCallback((_) => _scan());
   }
 
@@ -77,7 +76,6 @@ class _SecurityScanPageState extends State<SecurityScanPage>
       _lastStatus = status;
     });
 
-    // Nếu bị tấn công, hiện dialog block
     if (status.isAttacked) {
       await AntiHookVpn.checkAndBlockIfNeeded(context);
     }
@@ -220,14 +218,14 @@ class _StatusCards extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isScanning) {
       return const Text(
-        'Đang quét bảo mật...',
+        'Scanning for threats...',
         style: TextStyle(color: Colors.white70, fontSize: 16),
       );
     }
 
     if (status == null) {
       return const Text(
-        'Nhấn Scan để kiểm tra thiết bị',
+        'Tap Scan to check your device',
         style: TextStyle(color: Colors.white54, fontSize: 15),
       );
     }
@@ -235,7 +233,7 @@ class _StatusCards extends StatelessWidget {
     return Column(
       children: [
         Text(
-          status!.isAttacked ? '⚠ Phát hiện mối đe dọa' : '✓ Thiết bị an toàn',
+          status!.isAttacked ? '⚠ Threat Detected' : '✓ Device is Secure',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -367,7 +365,7 @@ class _ScanButton extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            isScanning ? 'Đang quét...' : 'Scan Now',
+            isScanning ? 'Scanning...' : 'Scan Now',
             style: TextStyle(
               color: isScanning ? Colors.white38 : Colors.white,
               fontSize: 16,

@@ -9,10 +9,10 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-/// Flutter plugin entry point cho Android.
+/// Flutter plugin entry point for Android.
 ///
-/// Implements [ActivityAware] để có thể lấy [Context] cần thiết cho
-/// [SecurityDetector.isVpnActive] (dùng [ConnectivityManager]).
+/// Implements [ActivityAware] to obtain the [Context] required by
+/// [SecurityDetector.isVpnActive] (uses [ConnectivityManager]).
 class AntiHookVpnPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private lateinit var channel: MethodChannel
