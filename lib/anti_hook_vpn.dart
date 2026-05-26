@@ -44,9 +44,13 @@ class AntiHookVpn {
 
       onAttacked?.call(status);
 
-      if (!_isDialogShowing && context.mounted) {
+      if (!_isDialogShowing) {
         _isDialogShowing = true;
-        _showBlockingDialog(context, _buildMessage(status));
+        try {
+          _showBlockingDialog(context, _buildMessage(status));
+        } catch (_) {
+          _isDialogShowing = false;
+        }
       }
     } on PlatformException catch (e) {
       debugPrint('❌ AntiHookVpn: Native call failed — ${e.message}');
@@ -70,8 +74,9 @@ class AntiHookVpn {
       barrierDismissible: false,
       barrierColor: Colors.black87,
       transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (_, __, ___) => PopScope(
-        canPop: false,
+      // ignore: deprecated_member_use
+      pageBuilder: (_, __, ___) => WillPopScope(
+        onWillPop: () async => false,
         child: AlertDialog(
           title: const Row(
             children: [

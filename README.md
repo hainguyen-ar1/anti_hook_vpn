@@ -24,7 +24,7 @@ A Flutter plugin that detects **VPN**, **Proxy**, and **Frida** hook framework a
 - **Android**: minSdk ≥ 24
 - **iOS**: iOS ≥ 13.0
 - **Flutter**: ≥ 3.3.0
-- **Dart**: ≥ 3.0.0
+- **Dart**: ≥ 2.18.0
 
 ---
 

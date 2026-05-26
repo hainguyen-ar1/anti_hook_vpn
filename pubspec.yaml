@@ -1,12 +1,12 @@
 name: anti_hook_vpn
 description: "Flutter plugin to detect VPN, Proxy, and Frida hooking on Android & iOS. Protect your app from runtime attack tools."
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/hainguyen-ar1/anti_hook_vpn
 repository: https://github.com/hainguyen-ar1/anti_hook_vpn
 issue_tracker: https://github.com/hainguyen-ar1/anti_hook_vpn/issues
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: '>=2.18.0 <4.0.0'
   flutter: '>=3.3.0'
 
 dependencies:
